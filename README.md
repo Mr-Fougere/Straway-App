@@ -1,8 +1,10 @@
 # Mobile App Straway
 
 ## Introduction
-Le projet porte sur le développement d'une application mobile et un protocole d'échange pour la société Straway. 
+Le projet porte sur le développement d'une application mobile et un protocole d'échange pour la société Straway.
+
  Elle permettra à l'utilisateur de se connecter aux pots connectés de la marque, puis de le configurer ainsi qu'avoir accès à une boutique en ligne pour commander de nouveaux pots.
+ 
 La seconde partie de ce projet est le développement d'un protocole qui sera utiliser pour communiquer avec le pot connecté via le téléphone de l'utilisateur. Celui-ci permettra la configuration du pot et le recueil des données de la plante. 
 ## Langages utilisés
 
