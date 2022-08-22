@@ -18,6 +18,7 @@ La seconde partie de ce projet est le développement d'un protocole qui sera uti
  - [ ] Réglages manuelle des options
  - [ ] Suivi de données au travers de graphiques
  - [ ] Accéder au magasin
+ - [ ] Partager l'accés au données de la plante avec un tiers
 
 ### Protocole d'échange
 - [ ] Connexion / Déconnexion au pot 
