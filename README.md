@@ -44,9 +44,9 @@ La seconde partie de ce projet est le développement d'un protocole qui sera uti
 	 - [ ] Réglages en fonction de la plante
 
 ## Carnet de bord
-Semaine du 22/08/2022 au 29/08/2022
+<i>Semaine du 22/08/2022 au 29/08/2022</i>
 --
-Objectifs 'SMART' :
+	<b>Objectifs 'SMART' :</b>
 - [ ] Choisir la technologie back-end : Python vanilla OU Django REST Framework 
 - [ ] Designer modélisation BDD et diagramme de classes 
 - [ ] Développer CRUD :
