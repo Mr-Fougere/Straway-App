@@ -21,7 +21,7 @@ La seconde partie de ce projet est le développement d'un protocole qui sera uti
 
 ### Protocole d'échange
 - [ ] Connexion / Déconnexion au pot 
- - [ ] Envoie d'instruction par bluetooth
+ - [ ] Envoie d'instructions par Wifi
 	 - [ ] Réglages en fonction de la plante
  - [ ] Réception des données collectées par le pot
 	 - [ ] Taux d'humidité
