@@ -48,9 +48,9 @@ Semaine du 22/08/2022 au 29/08/2022
 --
 
 ### Objectifs 'SMART' fixés par l'étudiant et le mentor pour la prochaine session
-    - [ ] Choisir la technologie back-end : Python vanilla OU Django REST Framework 
-    - [ ] Designer modélisation BDD et diagramme de classes 
-    - [ ] Développer CRUD :
-        - [ ] User : id, firstName, lastName, email, password, roles (JSON), pots (classe Pot), picture 
-        - [ ] Pot : id, nom, taux d’humidité, types de plante (JSON), plante (classe Plante), température, humidité, niveau du réservoir, taux d’ensoleillement, isConnected (booléen), ip (UNIQUE), prix, image, collection (string) 
-        - [ ] Plant : id, nom, type, température, humidité, niveau du réservoir, taux d’ensoleillement, pots (classe Pot), image
+- [ ] Choisir la technologie back-end : Python vanilla OU Django REST Framework 
+- [ ] Designer modélisation BDD et diagramme de classes 
+- [ ] Développer CRUD :
+- [ ] User : id, firstName, lastName, email, password, roles (JSON), pots (classe Pot), picture 
+- [ ] Pot : id, nom, taux d’humidité, types de plante (JSON), plante (classe Plante), température, humidité, niveau du réservoir, taux d’ensoleillement, isConnected (booléen), ip (UNIQUE), prix, image, collection (string) 
+- [ ] Plant : id, nom, type, température, humidité, niveau du réservoir, taux d’ensoleillement, pots (classe Pot), image
