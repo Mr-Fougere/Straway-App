@@ -9,7 +9,8 @@ La seconde partie de ce projet est le développement d'un protocole qui sera uti
 ## Langages utilisés
 
  - <b>React Native </b> : pour l'application mobile
- - <b>Python </b> : pour le protocole d'échange
+ - <b>Python </b> : pour le serveur de transit des informations
+ - <b>C++</b> : pour la programmation de la carte ESP32
 ## Fonctionnalités 
 ### Application mobile
  - [ ] CRUD compte utilisateur
@@ -19,15 +20,26 @@ La seconde partie de ce projet est le développement d'un protocole qui sera uti
  - [ ] Suivi de données au travers de graphiques
  - [ ] Accéder au magasin
  - [ ] Partager l'accés au données de la plante avec un tiers
-
-### Protocole d'échange
-- [ ] Connexion / Déconnexion au pot 
- - [ ] Envoie d'instructions par Wifi
-	 - [ ] Réglages en fonction de la plante
  - [ ] Réception des données collectées par le pot
 	 - [ ] Taux d'humidité
 	 - [ ] Niveau d'eau du réservoir
 	 - [ ] Température 
 	 - [ ] Humidité de l'air
 	 - [ ] Taux d'ensoleillement de la plante
+ - [ ] Envoie d'instructions par Wifi
+	 - [ ] Réglages en fonction de la plante
+
+### Serveur
+- [ ] Connexion au Wifi
+- [ ] Transmission des données
+
+### ESP32 
+- [ ] Envoi des données collectées par le pot
+	 - [ ] Taux d'humidité
+	 - [ ] Niveau d'eau du réservoir
+	 - [ ] Température 
+	 - [ ] Humidité de l'air
+	 - [ ] Taux d'ensoleillement de la plante
+ - [ ] Réception d'instructions par Wifi
+	 - [ ] Réglages en fonction de la plante
 
