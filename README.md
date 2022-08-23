@@ -49,7 +49,7 @@ La seconde partie de ce projet est le développement d'un protocole qui sera uti
 <b>Objectifs 'SMART' :</b>
 - [ ] Choisir la technologie back-end : Python vanilla OU Django REST Framework 
 - [X] Designer modélisation BDD et diagramme de classes 
-- [ ] Développer CRUD :
+- [X] Développer CRUD :
 - [x] User : id, firstName, lastName, email, password, roles (JSON), pots (classe Pot), picture 
 - [x] Pot : id, nom,date de sortie, taux d’humidité, types de plante (JSON), plante (classe Plante), température, humidité, niveau du réservoir, taux d’ensoleillement, isConnected (booléen), ip (UNIQUE), prix, image, collection (string) 
 - [X] Plant : id, nom, type, température, humidité, niveau du réservoir, taux d’ensoleillement, pots (classe Pot), image
