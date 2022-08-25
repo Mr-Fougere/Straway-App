@@ -11,8 +11,10 @@
 
 <body>
     <a href="/?interface=true">Back to panel</a>
+    <div class="list">
     {% for value in data %}
     <div class="card">
+        <div>
         <div class="picture-section">
             <img src="{{ url_for('static',filename='images/Icon_1.svg') }}" alt="img">
         </div>
@@ -23,12 +25,15 @@
             </div>
             {% endfor %}
         </div>
+        </div>
         <div class="buttons-section">
-            <a href="/delete/{{type}}/{{value['id']}}?interface=true">Delete</a>
+            <a href="/show/{{type}}/{{value['id']}}?interface=true">Show</a>
             <a href="/edit/{{type}}/{{value['id']}}?interface=true">Modify</a>
+            <a href="/delete/{{type}}/{{value['id']}}?interface=true">Delete</a>
         </div>
     </div>
     {% endfor %}
+</div>
 </body>
 
 </html>

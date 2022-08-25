@@ -18,6 +18,7 @@
 <script>
     let form = document.getElementById("form")
     let required = {{ values| tojson}}
+    let lastSelect = 0
     var submit = document.createElement("button")
     submit.type = "submit"
     submit.textContent="Submit {{type}}"
@@ -59,15 +60,51 @@
         form.appendChild(label);
         form.appendChild(input); // put it into the DOM
     });
-    form.appendChild(submit)
         let values_data={{ data| tojson}};
         Object.keys(values_data).forEach(k => {
             document.getElementById(k).value=values_data[k]
-        });
-    if ({{data|tojson}} !="") {
-        document.getElementById('form').action="/{{type}}/edit/{{id}}";
-    }else{
-        document.getElementById('form').action="/create/{{type}}";
+        }); 
+    var column_types={{col_types|tojson}}
+
+    function changeColumn(inputId,selectId){
+        var selectChanged = document.getElementById(selectId)
+        var inputToChange = document.getElementById(inputId)
+        inputToChange.type=column_types[selectChanged.value]
     }
-    
+    function newColumn() {
+        var btn_add = document.getElementById("button_add");
+        var div = document.createElement("div");
+        var select = document.createElement('select');
+        var input = document.createElement('input');
+        input.type="number";
+        input.id="input"+(lastSelect+1)
+        select.id="select"+(lastSelect+1)
+        select.onchange=()=>changeColumn(input.id,select.id)
+        div.appendChild(select);
+        div.appendChild(input)
+        form.insertBefore(div,btn_add);
+        var selectCreated=document.getElementById(select.id)
+        Object.keys(column_types).forEach(c => {
+            var option =document.createElement("option")
+            option.value=c
+            option.text=c
+            selectCreated.add(option)
+        });
+        lastSelect+=1
+    }
+    if ({{type| tojson}}=="table"){
+        var button_add = document.createElement("button");
+        button_add.id="button_add";
+        button_add.type="button";
+        button_add.onclick = ()=>newColumn();
+        button_add.textContent= "+ add column";
+        form.appendChild(button_add);
+    }
+    if ({{data|tojson}} !="") {
+        document.getElementById('form').action="/edit/{{type}}/{{id}}?interface=true";
+    }else{
+        document.getElementById('form').action="/create/{{type}}?interface=true";
+    }
+    form.appendChild(submit)
+
 </script>

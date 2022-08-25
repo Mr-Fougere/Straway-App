@@ -17,30 +17,33 @@ body{
 
 .card{
     background-color:lightgray;
-    width: 100%;
-    height:20vh;
-    margin:10px
+    width: 40vh;
+    height:fit-content;
+    margin:10px;
+    flex-direction:column
 }
 .picture-section{
-    height: 100%;
-    width: 10%;
+    height:12vh;
+    width: 12vh;
     justify-content: center;
     align-items: center;
 }
 img{
-    width: 90%;
-    height: 90%;
+    width: 10vh;
+    height: 10vh;   
     object-fit: scale-down;
     background-color: white;
 }
 .infos-section{
     flex-direction: column;
     flex-wrap: wrap;
-    width: 80%;
+    width: fit-content;
     justify-content:  center;
 }
 .buttons-section{
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-evenly;
 }
-
+.list{
+    flex-wrap: wrap;
+}

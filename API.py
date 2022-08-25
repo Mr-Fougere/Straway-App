@@ -33,6 +33,8 @@ cursor = cnx.cursor()
 
 DB_NAME = "straway_db"
 TABLES = {}
+IP = "127.0.0.1"
+COL_TYPES={"varchar":"text","int":"number","date":"date","json":"json","text":"text","boolean":"number","float":"number"}
 TABLES['users'] = (
     "CREATE TABLE `users` ("
     "  `id` int(255) NOT NULL AUTO_INCREMENT,"
@@ -79,42 +81,6 @@ TABLES['plants'] = (
     "  PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB")
 
-test_user = {
-    'first_name': "alexandre",
-    'last_name': "gaubert",
-    'email': "alexandre@gmail.com",
-    'password': "password",
-    'picture': "iunubi",
-    'pots': '{}',
-    'roles': 0
-}
-
-test_pot = {
-    'ip': "162.132.124.123",
-    'name': "Pot1",
-    'collection': "Collection1",
-    'model': "Model1",
-    'plant_types': json.dumps([{'nom': 'plante1'}, {'nom': 'plante2'}]),
-    'current_plant': 1,
-    'release_date': Date(2022, 8, 26),
-    'temperature': 23.5,
-    'humidity_rate': 30,
-    'tank_level': randint(0, 100),
-    'sunshine_rate': randint(0, 100),
-    'price': 15.99,
-    'picture': "",
-    'is_connected': randint(0, 1)
-}
-
-test_plant = {
-    'name': "Plant1",
-    'type': "Type1",
-    'temperature': 25.5,
-    'humidity_rate': 30,
-    'sunshine_rate': 40,
-    'picture': "",
-}
-
 #-----------FONCTIONS ----------------#
 
 def create_database(cursor, db_name):
@@ -148,18 +114,16 @@ def create_tables(database, cursor, tables):
         else:
             print("OK")
 
-
 def readRow(database, table, id):
     cnx.database = database
     cursor = cnx.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM "+table+" WHERE id = "+str(id))
     try:
+        cursor.execute("SELECT * FROM "+table+" WHERE id = "+str(id))
         result = cursor.fetchall()[0]
     except:
         return "Error : doesn't exists"
     else:
         return result
-
 
 def insert_into(database, table, object):
     cursor.execute("DESCRIBE "+database+"."+table)
@@ -176,7 +140,6 @@ def insert_into(database, table, object):
               "("+values_tags+") "
               "VALUES ("+values+")")
     cnx.database = database
-    print(insert, object)
     cursor.execute(insert, object)
     try:
         cnx.commit()
@@ -233,7 +196,7 @@ def getTypeTable(database, table):
 
 
 def getClass(classname):
-  all_class=inspect.getmembers(sys.modules[__name__],inspect.isclass)
+  all_class=inspect.getmembers(sys.modules[__name__])
   chosen_class={}
   for c in all_class:
     if c[0]==classname:
@@ -242,6 +205,7 @@ def getClass(classname):
   return chosen_class
 
 def getTables(database):
+  cnx.database = database
   cursor.execute("SHOW TABLES")
   tables = cursor.fetchall()
   list_table=[]
@@ -261,17 +225,18 @@ def init_class(self, user):
                 setattr(self, attr, user[attr])
 
 @classmethod
-def create(self, user):  # function add from database
-        new_user = User(user)
-        delattr(new_user, 'id')
-        insert_into(DB_NAME, self.TABLENAME, list(new_user.__dict__.values()))
-        print("New "+self.NAME+" created : " +
-              new_user.first_name.capitalize()+" "+new_user.last_name.capitalize())
+def create(self, values):  # function add from database
+        current_class=getClass(self.TABLENAME)
+        new = current_class(values)
+        delattr(new, 'id')
+        insert_into(DB_NAME, self.TABLENAME, list(new.__dict__.values()))
+        print("New "+self.NAME+" created ")
+
 @classmethod
 def read(self, id):  # function read from database
+        current_class=getClass(self.TABLENAME)
         rowValues = readRow(DB_NAME, self.TABLENAME, id)
-        print(rowValues)
-        return User(rowValues)
+        return current_class(rowValues)
 
 @classmethod
 def delete(self, id): # function delete from database 
@@ -283,13 +248,19 @@ def update(self, updated):
         print(self.NAME+" "+str(self.id)+" updated")
 
 @classmethod
-def readAll(self):
+def readAll(self,number=False):
         cursor = cnx.cursor(dictionary=True)
         cursor.execute("SELECT * FROM "+self.TABLENAME)
         fetch = cursor.fetchall()
         all = []
+        columns=getNameColumns(DB_NAME,self.TABLENAME)
+        if number:
+          columns=columns[0:number]
         for f in fetch:
-            all.append(f)
+            obj={}
+            for c in columns:
+              obj[c] = f[c]
+            all.append(obj)
         return all
 
 def createClass(name):
@@ -305,156 +276,19 @@ def createClass(name):
                "update":update,
                }
                 )
+  
+
 #-----------CLASSES ----------------#
-
-
-class User():
-    TABLENAME = 'users'
-    NAME = "User"
-
-def __init__(self, init):
-        attributes = getNameColumns('straway_db', self.TABLENAME)
-        for attr in attributes:
-            try:
-                init[attr]
-            except:
-                setattr(self, attr, NULL)
-            else:
-                setattr(self, attr, init[attr])
-
-    @classmethod
-    def create(self, entry):  # add new user to database
-        new = Pot(entry)
-        delattr(new, 'id')
-        insert_into(DB_NAME, self.TABLENAME, list(new.__dict__.values()))
-        print("New "+self.NAME+" created : "+new.name.capitalize()+" "+new.ip)
-
-    @classmethod
-    def read(self, id):  # read user information from database
-        rowValues = readRow(DB_NAME, self.TABLENAME, id)
-        print(rowValues)
-        return Pot(rowValues)
-
-    @classmethod
-    def delete(self, id):
-        deleteRow(DB_NAME, self.TABLENAME, "id="+str(id))
-        print(self.NAME+" "+str(id)+" deleted")
-
-    def update(self, updated):
-        updateRow(DB_NAME, self.TABLENAME, "id="+str(self.id), updated)
-        print(self.NAME+" "+str(self.id)+" updated")
-
-    @classmethod
-    def readAll(self):
-        cursor = cnx.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM "+self.TABLENAME)
-        fetch = cursor.fetchall()
-        all = []
-        for f in fetch:
-            all.append(f)
-        return all
-
-    
-    pass
-
-
-class Pot():
-
-    TABLENAME = 'pots'
-    NAME = 'Pot'
-
-    def __init__(self, init):
-        attributes = getNameColumns('straway_db', self.TABLENAME)
-        for attr in attributes:
-            try:
-                init[attr]
-            except:
-                setattr(self, attr, NULL)
-            else:
-                setattr(self, attr, init[attr])
-
-    @classmethod
-    def create(self, entry):  # add new user to database
-        new = Pot(entry)
-        delattr(new, 'id')
-        insert_into(DB_NAME, self.TABLENAME, list(new.__dict__.values()))
-        print("New "+self.NAME+" created : "+new.name.capitalize()+" "+new.ip)
-
-    @classmethod
-    def read(self, id):  # read user information from database
-        rowValues = readRow(DB_NAME, self.TABLENAME, id)
-        print(rowValues)
-        return Pot(rowValues)
-
-    @classmethod
-    def delete(self, id):
-        deleteRow(DB_NAME, self.TABLENAME, "id="+str(id))
-        print(self.NAME+" "+str(id)+" deleted")
-
-    def update(self, updated):
-        updateRow(DB_NAME, self.TABLENAME, "id="+str(self.id), updated)
-        print(self.NAME+" "+str(self.id)+" updated")
-
-    @classmethod
-    def readAll(self):
-        cursor = cnx.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM "+self.TABLENAME)
-        fetch = cursor.fetchall()
-        all = []
-        for f in fetch:
-            all.append(f)
-        return all
-
-    pass
-
-
-class Plant:
-    TABLENAME = 'plants'
-    NAME = 'Plant'
-
-    def __init__(self, init):
-        attributes = getNameColumns('straway_db', self.TABLENAME)
-        for attr in attributes:
-            try:
-                init[attr]
-            except:
-                setattr(self, attr, NULL)
-            else:
-                setattr(self, attr, init[attr])
-
-    @classmethod
-    def create(self, entry):  # add new user to database
-        new = Plant(entry)
-        delattr(new, 'id')
-        insert_into(DB_NAME, self.TABLENAME, list(new.__dict__.values()))
-        print("New "+self.NAME+" created : "+new.name.capitalize())
-
-    @classmethod
-    def read(self, id):  # read user information from database
-        rowValues = readRow(DB_NAME, self.TABLENAME, id)
-        print(rowValues)
-        return Plant(rowValues)
-
-    @classmethod
-    def delete(self, id):
-        deleteRow(DB_NAME, self.TABLENAME, "id="+str(id))
-        print(self.NAME+" "+str(id)+" deleted")
-
-    def update(self, updated):
-        updateRow(DB_NAME, self.TABLENAME, "id="+str(self.id), updated)
-        print(self.NAME+" "+str(self.id)+" updated")
-
-    @classmethod
-    def readAll(self):
-        cursor = cnx.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM "+self.TABLENAME)
-        fetch = cursor.fetchall()
-        all = []
-        for f in fetch:
-            all.append(f)
-        return all
-
-    pass
+tables_index=getTables(DB_NAME)
+for table in tables_index:
+  
+  try:
+    createClass(table)
+  except:
+    print("error: class not created")
+  else:
+    print(getClass(table).read(1))
+    print("class "+table+" created successfully")
 #-----------PROGRAMME ----------------#
 
 
@@ -468,52 +302,64 @@ create_tables(DB_NAME, cursor, TABLES)
 def index():
   tables=getTables(DB_NAME)
   if not request.args.get("interface"):
-    return tables 
+    tables_index=[]
+    for table in tables:
+      tables_index.append("http://127.0.0.1:5000/list/"+table)
+
+    return tables_index 
   else:
     return render_template('index.html',tables=tables)
-
-
+  
 @app.route('/show/<type>/<id>',methods=['GET'])
 def showing(type,id):
-  current_class=getClass(type[0:-1].capitalize())
+  current_class=getClass(type)
   try:
     response=current_class.read(id).__dict__
   except mysql.connector.Error as err:
     return err
   else: 
-    return response
+    if not request.args.get("interface"):
+        return response
+    else:
+        return render_template("list.html", data=[response], type=type)
 
 @app.route('/delete/<type>/<id>',methods=['GET'])
 def deleting(type,id):
-    current_class=getClass(type[0:-1].capitalize())
+    current_class=getClass(type)
     try:
       current_class.delete(id)
     except mysql.connector.Error as err:
         return err
     else:
-        return type+" "+id+" successfully deleted"
+        if not request.args.get("interface"):
+            return type+" "+id+" deleted successfully"
+        else:
+            return render_template("display.html",type=type,message=type+" "+id+" deleted successfully")
 
 
 @app.route('/edit/<type>/<id>', methods=['POST', 'GET'])
 def editing(type, id):
-    current_class=getClass(type[0:-1].capitalize())
+    current_class=getClass(type)
     response=current_class.read(id)
-    if not request.args.get("interface") and request.method=='POST':
+    if request.method=="POST":
         try:
           current_class.update(response,request.form)
         except mysql.connector.Error as err:
             return "Error : "+err.msg
         else:
-            return type+" "+id+" updated successfully"
+          if not request.args.get("interface"):
+            return type+" "+id+" edit successfully"
+          else:
+            return render_template("display.html",type=type,message=type+" "+id+" edit successfully")
+
     else:
         delattr(response,'id')
         return render_template("create.html", data=response.__dict__, type=type,values=getTypeTable(DB_NAME, type),id=id)
 
-
 @app.route('/list/<type>', methods=['GET'])
 def listing(type):
-    current_class=getClass(type[0:-1].capitalize())
-    response = current_class.readAll()
+    current_class=getClass(type)
+    response = current_class.readAll(3)
     if not request.args.get("interface"):
         return response
     else:
@@ -521,16 +367,21 @@ def listing(type):
 
 @app.route('/create/<type>', methods=['GET', 'POST'])
 def creating(type):
-    current_class=getClass(type[0:-1].capitalize())
+    current_class=getClass(type)
     if request.method == "POST":
         json_request = json.loads(json.dumps(request.form))
-        print(json_request)
         current_class.create(json_request)
-        return type+" created successfully"
+        if not request.args.get("interface"):
+            return type+" created successfully"
+        else:
+            return render_template("display.html",type=type,message=type+" create successfully")
     else:
-        return render_template('create.html', values=getTypeTable(DB_NAME, type), type=type,data="")
+      if type=="table":
+        values=""
+      else:
+        values=getTypeTable(DB_NAME, type)
+      return render_template('create.html', values=values, type=type,data="",col_types=COL_TYPES)
 
 #-------------LOOP-----------------#
-getTables(DB_NAME)
 if __name__ == "__main__":
     app.run()
