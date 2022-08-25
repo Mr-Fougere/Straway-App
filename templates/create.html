@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STRAWEB</title>
+</head>
+
+<body>
+    <button onclick="history.back()">Go Back</button>
+    <form id="form" style="display: flex;flex-direction: column;width: 40vh;" method="post" >
+    </form>
+</body>
+
+</html>
+<script>
+    let form = document.getElementById("form")
+    let required = {{ values| tojson}}
+    var submit = document.createElement("button")
+    submit.type = "submit"
+    submit.textContent="Submit {{type}}"
+    Object.keys(required).forEach(k => {
+        var input = document.createElement("input");
+        var label = document.createElement("label");
+        var select = document.createElement("select");
+        label.textContent = k;
+        switch (k) {
+            case "picture":
+                input.type = "file";
+                break;
+            case "release_date":
+                input.type = "date";
+                break;
+            case "sunshine_rate":
+            case "temperature":
+            case "humidity_rate":
+            case "is_connected":
+            case "price":
+            case "tank_level":
+            case "current_plant":
+                input.type = "number";
+                input.step="0.1"
+                input.min=0
+                input.max=100
+                break;
+            case "collection":
+            case "model":
+                input = select
+                break;
+            default:
+                input.type = "text"
+
+                break;
+        }
+        input.id = k;
+        input.name = k;
+        form.appendChild(label);
+        form.appendChild(input); // put it into the DOM
+    });
+    form.appendChild(submit)
+        let values_data={{ data| tojson}};
+        Object.keys(values_data).forEach(k => {
+            document.getElementById(k).value=values_data[k]
+        });
+    if ({{data|tojson}} !="") {
+        document.getElementById('form').action="/{{type}}/edit/{{id}}";
+    }else{
+        document.getElementById('form').action="/create/{{type}}";
+    }
+    
+</script>

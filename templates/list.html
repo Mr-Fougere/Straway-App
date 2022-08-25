@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/css.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STRAWEB</title>
+</head>
+
+<body>
+    <a href="/?interface=true">Back to panel</a>
+    {% for value in data %}
+    <div class="card">
+        <div class="picture-section">
+            <img src="{{ url_for('static',filename='images/Icon_1.svg') }}" alt="img">
+        </div>
+        <div class="infos-section">
+            {% for key,value in value.items() %}
+            <div class="info">
+                <div><b>{{key}}</b> : {{value}}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="buttons-section">
+            <a href="/delete/{{type}}/{{value['id']}}?interface=true">Delete</a>
+            <a href="/edit/{{type}}/{{value['id']}}?interface=true">Modify</a>
+        </div>
+    </div>
+    {% endfor %}
+</body>
+
+</html>
+<script>
+</script>

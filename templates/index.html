@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css.css">
+    <title>STRAWEB</title>
+</head>
+
+<body>
+    <div style="display: flex;flex-direction: column;">
+        <h1>STRAWEB</h1>
+        <h2>Control Panel </h2>
+        <h3>Listings</h3>
+        <ul>
+            {% for table in tables %}
+                <li>
+                    <h3><a href="http://127.0.0.1:5000/list/{{table}}?interface=true">{{table}}</a></h3>
+                </li>
+            {% endfor %}
+            <li>
+                <h3><a href="http://127.0.0.1:5000/create/table?interface=true">+ new table</a></h2>
+            </li>
+        </ul>
+        <h3>Creation</h3>
+        <ul>
+            {% for table in tables %}
+                <li>
+                    <h3><a href="http://127.0.0.1:5000/create/{{table}}?interface=true">new {{table}}</a></h3>
+                </li>
+            {% endfor %}
+        </ul>
+
+    </div>
+</body>
+
+</html>
