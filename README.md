@@ -53,7 +53,7 @@ La seconde partie de ce projet est le développement d'un protocole qui sera uti
 <i>Semaine du 22/08/2022 au 29/08/2022</i>
 --
 <b>Objectifs 'SMART' :</b>
-- [x ] Choisir la technologie back-end : *Python vanilla* OU Django REST Framework 
+- [X] Choisir la technologie back-end : *Python vanilla* OU Django REST Framework 
 - [X] Designer modélisation BDD et diagramme de classes 
 - [X] Développer CRUD :
 - [x] User : id, firstName, lastName, email, password, roles (JSON), pots (classe Pot), picture 
@@ -63,7 +63,7 @@ La seconde partie de ce projet est le développement d'un protocole qui sera uti
  <i>Semaine du 30/08/2022 au 04/09/2022</i>
 --
 <b>Objectifs 'SMART' :</b>
-  - [x] Régler problème d’upload d’images avec Python
-    - [ ] Programmer l’ESP32 pour récupérer toutes les données utiles (taux d’humidité, niveau du réservoir, température, taux d’ensoleillement, isConnected) 
-    - [ ] Programmer l’ESP32 pour envoyer les identifiants Wi-Fi de l’application web (administration) vers la carte 
-    - [ ] (Commencer le développement de l’application React Native : authentification (créer un compte, connexion utilisateur, barre de navigation)
+ - [x] Régler problème d’upload d’images avec Python
+ - [ ] Programmer l’ESP32 pour récupérer toutes les données utiles (taux d’humidité, niveau du réservoir, température, taux d’ensoleillement, isConnected) 
+ - [ ] Programmer l’ESP32 pour envoyer les identifiants Wi-Fi de l’application web (administration) vers la carte 
+ - [ ] (Commencer le développement de l’application React Native : authentification (créer un compte, connexion utilisateur, barre de navigation)
