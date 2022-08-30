@@ -16,7 +16,7 @@
     <div class="card">
         <div>
         <div class="picture-section">
-            <img src="{{ url_for('static',filename='images/Icon_1.svg') }}" alt="img">
+            <img src="{{ url_for('static',filename='uploads/'+value['picture']) }}" alt="img">
         </div>
         <div class="infos-section">
             {% for key,value in value.items() %}

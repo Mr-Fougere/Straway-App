@@ -1,10 +1,15 @@
 # python 3.8
 
 import inspect
+import os
 from os import error
 from random import randint, random
 import sys
+from types import NoneType
+from unittest import result
 import requests
+import random
+import string
 from asyncio.windows_events import NULL
 import json
 from sqlite3 import Date
@@ -26,6 +31,7 @@ config = {
 
 app = Flask(__name__)
 CORS(app)
+app.config["IMAGE_UPLOADS"]= "C:/Users/alexa/Documents/Projets/Straway-app/static/uploads"
 cnx = mysql.connector.connect(**config)
 cursor = cnx.cursor()
 
@@ -34,7 +40,8 @@ cursor = cnx.cursor()
 DB_NAME = "straway_db"
 TABLES = {}
 IP = "127.0.0.1"
-COL_TYPES={"varchar":"text","int":"number","date":"date","json":"json","text":"text","boolean":"number","float":"number"}
+COL_TYPES={"varchar":"text","int":"number","datetime":"date","json":"json","text":"text","boolean":"number","float":"number"}
+ABC123= string.ascii_letters+string.digits
 TABLES['users'] = (
     "CREATE TABLE `users` ("
     "  `id` int(255) NOT NULL AUTO_INCREMENT,"
@@ -79,7 +86,7 @@ TABLES['plants'] = (
     "  `sunshine_rate` int(5),"
     "  `picture` varchar(255),"
     "  PRIMARY KEY (`id`)"
-    ") ENGINE=InnoDB")
+    ") ENGINE=InnoDB") 
 
 #-----------FONCTIONS ----------------#
 
@@ -98,7 +105,6 @@ def create_database(cursor, db_name):
         else:
             print(err.msg)
 
-
 def create_tables(database, cursor, tables):
     cnx.database = database
     for table_name in tables:
@@ -113,6 +119,19 @@ def create_tables(database, cursor, tables):
                 print(err.msg)
         else:
             print("OK")
+
+def form_table(database, json_table):
+  cnx.database= database
+  query="CREATE TABLE `"+json_table["tableName"]+"` (`id` int(255) NOT NULL AUTO_INCREMENT,PRIMARY KEY (`id`),"
+  for key in json_table:
+    if key != "tableName":
+      if json_table[key] == "varchar":
+        query+=" `"+key+"` "+json_table[key]+"(255),"
+      else:  
+        query+=" `"+key+"` "+json_table[key]+","
+  query = query[0:-1]
+  query+=") ENGINE=InnoDB"
+  return query 
 
 def readRow(database, table, id):
     cnx.database = database
@@ -148,7 +167,6 @@ def insert_into(database, table, object):
     else:
         print("Inserted values into table "+table)
 
-
 def deleteRow(database, table, conditions):
     cnx.database = database
     cursor.execute("DELETE FROM "+table + " WHERE "+conditions+";")
@@ -158,7 +176,6 @@ def deleteRow(database, table, conditions):
         print(err.msg)
     else:
         print("Deleted values into table "+table)
-
 
 def updateRow(database, table, conditions, new_values):
     cnx.database = database
@@ -173,7 +190,6 @@ def updateRow(database, table, conditions, new_values):
     cursor.execute(update)
     cnx.commit()
 
-
 def getNameColumns(database, table):
     cursor.execute("DESCRIBE "+database+"."+table)
     columnsList = cursor.fetchall()
@@ -181,7 +197,6 @@ def getNameColumns(database, table):
     for column in columnsList:
         names.append(column[0])
     return names
-
 
 def getTypeTable(database, table):
     cnx.database = database
@@ -193,7 +208,6 @@ def getTypeTable(database, table):
             values[column[0]] = column[1]
     print(values)
     return values
-
 
 def getClass(classname):
   all_class=inspect.getmembers(sys.modules[__name__])
@@ -248,19 +262,25 @@ def update(self, updated):
         print(self.NAME+" "+str(self.id)+" updated")
 
 @classmethod
-def readAll(self,number=False):
+def readAll(self,chosen_values):
         cursor = cnx.cursor(dictionary=True)
         cursor.execute("SELECT * FROM "+self.TABLENAME)
         fetch = cursor.fetchall()
         all = []
-        columns=getNameColumns(DB_NAME,self.TABLENAME)
-        if number:
-          columns=columns[0:number]
+        if chosen_values:
+          columns=chosen_values
+        else:
+          columns=getNameColumns(DB_NAME,self.TABLENAME)
         for f in fetch:
-            obj={}
-            for c in columns:
+          obj={}
+          for c in columns:
+            try:
               obj[c] = f[c]
+            except:
+              if c == "picture":
+                obj[c] = "Icon Logo.svg"
             all.append(obj)
+
         return all
 
 def createClass(name):
@@ -277,7 +297,6 @@ def createClass(name):
                }
                 )
   
-
 #-----------CLASSES ----------------#
 tables_index=getTables(DB_NAME)
 for table in tables_index:
@@ -291,12 +310,10 @@ for table in tables_index:
     print("class "+table+" created successfully")
 #-----------PROGRAMME ----------------#
 
-
 create_database(cursor, DB_NAME)
 create_tables(DB_NAME, cursor, TABLES)
 
 #---------Routes---------------------#
-
 
 @app.route('/')
 def index():
@@ -354,12 +371,12 @@ def editing(type, id):
 
     else:
         delattr(response,'id')
-        return render_template("create.html", data=response.__dict__, type=type,values=getTypeTable(DB_NAME, type),id=id)
+        return render_template("create.html", data=response.__dict__, type=type,values=getTypeTable(DB_NAME, type),id=id,col_types=COL_TYPES)
 
 @app.route('/list/<type>', methods=['GET'])
 def listing(type):
     current_class=getClass(type)
-    response = current_class.readAll(3)
+    response = current_class.readAll(["id","name","picture"])
     if not request.args.get("interface"):
         return response
     else:
@@ -370,7 +387,23 @@ def creating(type):
     current_class=getClass(type)
     if request.method == "POST":
         json_request = json.loads(json.dumps(request.form))
-        current_class.create(json_request)
+        try:
+          image = request.files.get("picture",None)
+          if image.filename=="":
+              print("Filename is invalid")
+          else:
+              random_name=  ''.join(random.choice(ABC123) for i in range(50))+".png"
+              image.save(os.path.join(app.config["IMAGE_UPLOADS"],random_name))
+          json_request["picture"]=random_name  
+
+        except Exception as e:
+          print(e)
+            
+        if type == "table":
+          create_tables(DB_NAME, cursor,{"newtable":form_table(DB_NAME,json_request)})
+          createClass(json_request["tableName"])
+        else:
+          current_class.create(json_request)
         if not request.args.get("interface"):
             return type+" created successfully"
         else:

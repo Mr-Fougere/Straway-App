@@ -10,7 +10,8 @@
 
 <body>
     <button onclick="history.back()">Go Back</button>
-    <form id="form" style="display: flex;flex-direction: column;width: 40vh;" method="post" >
+    <form id="form" style="display: flex;flex-direction: column;width: 50vh;" method="post" enctype = "multipart/form-data">
+    
     </form>
 </body>
 
@@ -62,25 +63,33 @@
     });
         let values_data={{ data| tojson}};
         Object.keys(values_data).forEach(k => {
-            document.getElementById(k).value=values_data[k]
+            if(k!="picture"){
+                document.getElementById(k).value=values_data[k]
+            }
         }); 
     var column_types={{col_types|tojson}}
 
-    function changeColumn(inputId,selectId){
+    function changeSelectName(inputId,selectId){
         var selectChanged = document.getElementById(selectId)
         var inputToChange = document.getElementById(inputId)
-        inputToChange.type=column_types[selectChanged.value]
+        selectChanged.name=inputToChange.value
     }
     function newColumn() {
         var btn_add = document.getElementById("button_add");
         var div = document.createElement("div");
         var select = document.createElement('select');
         var input = document.createElement('input');
-        input.type="number";
+        var span =document.createElement('span');
+        var span2 =document.createElement('span');
+        input.type="text";
         input.id="input"+(lastSelect+1)
         select.id="select"+(lastSelect+1)
-        select.onchange=()=>changeColumn(input.id,select.id)
+        span.textContent="Type:"
+        input.onchange=()=>changeSelectName(input.id,select.id)
+        div.appendChild(span);
         div.appendChild(select);
+        span2.textContent="Column name:"
+        div.appendChild(span2);
         div.appendChild(input)
         form.insertBefore(div,btn_add);
         var selectCreated=document.getElementById(select.id)
@@ -93,17 +102,26 @@
         lastSelect+=1
     }
     if ({{type| tojson}}=="table"){
+        var span = document.createElement("span");
+        var input = document.createElement("input");
+        var div = document.createElement("div");
+        span.textContent ="Tablename:"
+        input.type = "text";    
+        input.name ="tableName"
         var button_add = document.createElement("button");
         button_add.id="button_add";
         button_add.type="button";
         button_add.onclick = ()=>newColumn();
         button_add.textContent= "+ add column";
+        div.appendChild(span);
+        div.appendChild(input);
+        form.appendChild(div);
         form.appendChild(button_add);
     }
     if ({{data|tojson}} !="") {
-        document.getElementById('form').action="/edit/{{type}}/{{id}}?interface=true";
+        form.action="/edit/{{type}}/{{id}}?interface=true";
     }else{
-        document.getElementById('form').action="/create/{{type}}?interface=true";
+        form.action="/create/{{type}}?interface=true";
     }
     form.appendChild(submit)
 
